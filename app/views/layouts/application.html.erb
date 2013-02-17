@@ -1,21 +1,3 @@
-<!-- <!DOCTYPE html>
-<html>
-<head>
-  <title>Spotifind</title>
-  <#%= stylesheet_link_tag    "application", :media => "all" %>
-  <#%= javascript_include_tag "application" %>
-  <#%= csrf_meta_tags %>
-</head>
-<body>
-
-<#%= yield %>
-
-</body>
-</html> -->
-
-
-
-
 <!DOCTYPE html>
 <html>
 <head>
@@ -53,11 +35,21 @@
     <div class="row">
       <div class="tagline"><%= yield %></div>           
     </div>
-    <div class="event-list">
-    	<%= render "event_list" %>
+    <div id="event-list-header" style="text-align: center; margin-bottom: -70px;">
+      <h2>Upcoming Shows</h2>
+    </div>
+    <div class="event-list" id="show1">
+    	<%= render "show1" %>
+    </div>
+    <div class="event-list" id="show2">
+      <%= render "show2" %>
+    </div>
+    <div class="event-list" id="show3">
+      <%= render "show3" %>
     </div>
   </div>
 
 </body>
+</br></br><footer style='text-align: right;'>©Gvir Aviv 2013</footer>
 </html>
 
