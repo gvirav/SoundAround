@@ -1,0 +1,11 @@
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/Fixtures.html
+
+one:
+  date_time: 2013-02-21 00:50:31
+  price: MyString
+  ticket_link: MyString
+
+two:
+  date_time: 2013-02-21 00:50:31
+  price: MyString
+  ticket_link: MyString
