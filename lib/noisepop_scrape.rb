@@ -1,69 +1,66 @@
 require 'nokogiri'
 require 'open-uri'
+require 'csv'
 
 class NoisePopScraper
 
-  attr_accessible :lineups, :show_data
+  attr_accessor :lineups, :shows
 
   def initialize
     @url = "http://schedule.noisepop.com/"    
-    @noisepop = nokome(@url)
+    @noisepop = noko_me(@url)
     @lineups = []
-    @show_data = []
+    @shows = []
   end
 
-  def nokome(url)
+  def noko_me(url)
     Nokogiri::HTML(open(url))
   end
 
   def scrape_and_clean    
     scrape_lineups
-    scrape_show_data
+    scrape_shows
     to_hash
   end  
 
   def scrape_lineups
-    clean_data = []
-
-    @noisepop.css('ul li div h2 a').each do |element|
-      @lineups << element.text.strip
-      @lineups.each {|x| x.gsub!(/^\s/, "")}
-    end    
+    @noisepop.css('ul li div h2 a').each do |data|
+      @lineups << data.text.strip
+      @lineups.each { |x| x.gsub!(/^\s/, "") }
+    end       
   end
 
   def delete_nils(array)
     array.delete_if { |x| x == nil }
   end
 
-  def scrape_show_data
-    @noisepop.css('ul li div p').each do |element|
-      @show_data << element.text.gsub!(/[\n]/, "")
+  def scrape_shows
+    @noisepop.css('ul li div p').each do |data|
+      @shows << data.text.gsub!(/[\n]/, "")
     end
+    clean_shows
+  end
 
-    delete_nils(@show_data)
-    
-    @show_data.each do |element|      
-      element.gsub!(/\s{2}/, "")
-      element.gsub!(/\(map\)/, "")
-      element.split(' ')
+  def clean_shows
+    delete_nils(@shows)   
+    @shows.each do |x|
+      x.gsub!(/\s{2}/, "").gsub!(/\(map\)/, "").split(' ')      
     end
-    # puts @show_data
   end
 
   def to_hash
-    @hash = @show_data.zip(@lineups)
+    @hash = @shows.zip(@lineups)
     h1 = Hash[*@hash.flatten]
     h1.each do |k, v|      
-      if v.include?(',')
-        v = v.split(',').each {|x| x.gsub!(/^\s/, "")}
-      else
-        v = v.split(/^/)
-      end
-      puts "#{k} => #{v}"
+      v.include?(',') ? v = v.split(',').each {|x| x.gsub!(/^\s/, "")} : v = v.split(/^/)
     end
+            
+    CSV.open("file.csv", "wb") do |csv|      
+      csv << h1.values
+    end        
   end
 
-end
+end # /class
 
 noisepop = NoisePopScraper.new
 noisepop.scrape_and_clean
